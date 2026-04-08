@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CricBid — Cricket Auction</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Hero -->
+<section class="section section-dark hero-section">
+  <div class="container container-sm">
+    <div class="hero-eyebrow">🏏 Real-time multiplayer</div>
+    <h1 class="hero-title">CricBid</h1>
+    <p class="hero-sub">IPL-style cricket auction with 200+ players, auto-bidding timers & Claude AI squad rankings</p>
+  </div>
+</section>
+
+<!-- Create Room Form -->
+<section class="section section-dark" style="padding-top:0;">
+  <div class="container container-sm">
+    <div class="form-card" id="create-form">
+      <h2 style="margin-bottom:1.5rem;color:#fff;">Create Auction Room</h2>
+
+      <!-- Host identity -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" id="host-name" placeholder="Your name" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label>Your franchise name</label>
+          <input type="text" id="host-team" placeholder="e.g. Chennai Super Kings" maxlength="40" />
+        </div>
+      </div>
+
+      <!-- Auction settings -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Number of teams</label>
+          <select id="num-teams">
+            <option value="2">2 teams</option>
+            <option value="3">3 teams</option>
+            <option value="4" selected>4 teams</option>
+            <option value="5">5 teams</option>
+            <option value="6">6 teams</option>
+            <option value="8">8 teams</option>
+            <option value="10">10 teams</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Budget per team (₹ Crore)</label>
+          <input type="text" id="budget" placeholder="e.g. 100" value="100" maxlength="6" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Bid timer per player (seconds)</label>
+        <div class="timer-options">
+          <button class="timer-opt selected" data-val="15" onclick="selectTimer(this)">15s</button>
+          <button class="timer-opt" data-val="20" onclick="selectTimer(this)">20s</button>
+          <button class="timer-opt" data-val="30" onclick="selectTimer(this)">30s</button>
+          <button class="timer-opt" data-val="45" onclick="selectTimer(this)">45s</button>
+          <button class="timer-opt" data-val="60" onclick="selectTimer(this)">60s</button>
+          <button class="timer-opt" data-val="90" onclick="selectTimer(this)">90s</button>
+        </div>
+        <p class="label-hint">Timer resets whenever a new bid is placed. Auto-sold when timer hits 0.</p>
+      </div>
+
+      <!-- AI Mode -->
+      <div class="form-group">
+        <label>AI analysis mode</label>
+        <div class="mode-cards">
+          <label class="mode-card selected" onclick="selectMode(this,'career')">
+            <input type="radio" name="mode" value="career" checked />
+            <div class="mode-card-inner">
+              <div class="mode-icon">📚</div>
+              <div class="mode-title">Complete Career</div>
+              <div class="mode-desc">All-time stats, legacy, career averages</div>
+              <div class="mode-badge">Classic</div>
+            </div>
+          </label>
+          <label class="mode-card" onclick="selectMode(this,'recent')">
+            <input type="radio" name="mode" value="recent" />
+            <div class="mode-card-inner">
+              <div class="mode-icon">🔥</div>
+              <div class="mode-title">Recent Form</div>
+              <div class="mode-desc">2021–2025 form, IPL & T20 WC performances</div>
+              <div class="mode-badge mode-badge-fire">Hot</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Player Pool Selection -->
+      <div class="form-group">
+        <label>Player pool <span class="label-hint" style="display:inline;">(select players for the auction)</span></label>
+        <div class="player-pool-header">
+          <div class="pool-search-wrap">
+            <input type="text" id="pool-search" placeholder="Search players..." oninput="filterPoolPlayers()" />
+          </div>
+          <div class="pool-filters">
+            <button class="pool-filter-btn active" data-role="all" onclick="filterRole(this,'all')">All</button>
+            <button class="pool-filter-btn" data-role="Batsman" onclick="filterRole(this,'Batsman')">🏏 Bat</button>
+            <button class="pool-filter-btn" data-role="Bowler" onclick="filterRole(this,'Bowler')">⚡ Bowl</button>
+            <button class="pool-filter-btn" data-role="All-rounder" onclick="filterRole(this,'All-rounder')">⭐ AR</button>
+            <button class="pool-filter-btn" data-role="Wicketkeeper" onclick="filterRole(this,'Wicketkeeper')">🧤 WK</button>
+          </div>
+        </div>
+        <div class="pool-selection-summary">
+          <span id="selected-count">0 selected</span>
+          <div class="pool-quick-actions">
+            <button onclick="selectAll()" class="pool-action-btn">Select all</button>
+            <button onclick="selectNone()" class="pool-action-btn">Clear all</button>
+            <button onclick="selectRandom(30)" class="pool-action-btn">Random 30</button>
+            <button onclick="selectRandom(40)" class="pool-action-btn">Random 40</button>
+          </div>
+        </div>
+        <div id="player-pool-grid" class="player-pool-grid">
+          <p style="color:#666;font-size:14px;">Loading players...</p>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-full" onclick="createRoom()" style="margin-top:0.5rem;">
+        Create auction room →
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div id="creating-room" style="display:none;text-align:center;padding:3rem 0;">
+      <div class="ai-spinner" style="margin:0 auto 1rem;"></div>
+      <p style="color:#aaa;">Creating your room...</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let allPlayers = [];
+let selectedIndices = new Set();
+let currentRole = "all";
+let bidTime = 15;
+
+// ── Load players ──────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/players");
+    allPlayers = await res.json();
+    // Default: select all
+    allPlayers.forEach((_, i) => selectedIndices.add(i));
+    renderPoolGrid();
+    updateSelectedCount();
+  } catch (e) {
+    document.getElementById("player-pool-grid").innerHTML =
+      `<p style="color:#e07070;">Failed to load players. Please refresh.</p>`;
+  }
+});
+
+// ── Player pool rendering ─────────────────────────────────────────────────────
+function renderPoolGrid() {
+  const search = (document.getElementById("pool-search").value || "").toLowerCase();
+  const grid = document.getElementById("player-pool-grid");
+
+  const filtered = allPlayers
+    .map((p, i) => ({ p, i }))
+    .filter(({ p }) => {
+      const roleOk = currentRole === "all" || p.role === currentRole;
+      const searchOk = !search || p.name.toLowerCase().includes(search) || p.country.toLowerCase().includes(search);
+      return roleOk && searchOk;
+    });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p style="color:#666;font-size:14px;">No players found.</p>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(({ p, i }) => {
+    const sel = selectedIndices.has(i);
+    const rc = roleColor(p.role);
+    return `
+      <div class="pool-player-card ${sel ? "selected" : ""}" onclick="togglePlayer(${i})" data-idx="${i}">
+        <div class="pool-avatar" style="background:${rc.bg};color:${rc.text}">${p.initials}</div>
+        <div class="pool-info">
+          <div class="pool-name">${p.name}</div>
+          <div class="pool-meta">${p.country} · <span class="pool-role" style="color:${rc.text}">${shortRole(p.role)}</span></div>
+        </div>
+        <div class="pool-base">₹${p.base}Cr</div>
+        <div class="pool-check">${sel ? "✓" : ""}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function togglePlayer(idx) {
+  if (selectedIndices.has(idx)) {
+    selectedIndices.delete(idx);
+  } else {
+    selectedIndices.add(idx);
+  }
+  // Re-render just this card
+  const card = document.querySelector(`.pool-player-card[data-idx="${idx}"]`);
+  if (card) {
+    card.classList.toggle("selected", selectedIndices.has(idx));
+    card.querySelector(".pool-check").textContent = selectedIndices.has(idx) ? "✓" : "";
+  }
+  updateSelectedCount();
+}
+
+function filterPoolPlayers() { renderPoolGrid(); }
+
+function filterRole(btn, role) {
+  currentRole = role;
+  document.querySelectorAll(".pool-filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderPoolGrid();
+}
+
+function selectAll() {
+  allPlayers.forEach((_, i) => selectedIndices.add(i));
+  renderPoolGrid(); updateSelectedCount();
+}
+
+function selectNone() {
+  selectedIndices.clear();
+  renderPoolGrid(); updateSelectedCount();
+}
+
+function selectRandom(n) {
+  selectedIndices.clear();
+  const indices = [...Array(allPlayers.length).keys()];
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  indices.slice(0, n).forEach(i => selectedIndices.add(i));
+  renderPoolGrid(); updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  document.getElementById("selected-count").textContent = `${selectedIndices.size} selected`;
+}
+
+// ── Timer & mode helpers ──────────────────────────────────────────────────────
+function selectTimer(btn) {
+  document.querySelectorAll(".timer-opt").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  bidTime = parseInt(btn.dataset.val);
+}
+
+function selectMode(card, mode) {
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+  card.classList.add("selected");
+}
+
+// ── Create room ───────────────────────────────────────────────────────────────
+async function createRoom() {
+  const hostName = document.getElementById("host-name").value.trim();
+  const hostTeam = document.getElementById("host-team").value.trim();
+  const numTeams = document.getElementById("num-teams").value;
+  const budget   = document.getElementById("budget").value.trim();
+  const mode     = document.querySelector("input[name='mode']:checked").value;
+
+  if (!hostName) { alert("Please enter your name"); return; }
+  if (!hostTeam) { alert("Please enter your franchise name"); return; }
+  if (!budget || isNaN(budget) || Number(budget) < 10) { alert("Enter a valid budget (min 10 Cr)"); return; }
+  if (selectedIndices.size < 5) { alert("Please select at least 5 players for the auction"); return; }
+
+  document.getElementById("create-form").style.display = "none";
+  document.getElementById("creating-room").style.display = "block";
+
+  try {
+    const res = await fetch("/api/create-room", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        hostName,
+        hostTeam,
+        numTeams: Number(numTeams),
+        budget: Number(budget),
+        analysisMode: mode,
+        bidTime,
+        selectedPlayerIds: [...selectedIndices],
+      }),
+    });
+    const { roomId } = await res.json();
+    window.location.href = `/room/${roomId}?host=1&name=${encodeURIComponent(hostName)}&team=${encodeURIComponent(hostTeam)}`;
+  } catch (e) {
+    alert("Failed to create room. Please try again.");
+    document.getElementById("create-form").style.display = "block";
+    document.getElementById("creating-room").style.display = "none";
+  }
+}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function roleColor(role) {
+  const map = {
+    "Batsman":      { bg: "#162233", text: "#5a9fd4" },
+    "Bowler":       { bg: "#0e2118", text: "#4cb58a" },
+    "All-rounder":  { bg: "#231a0c", text: "#c9872a" },
+    "Wicketkeeper": { bg: "#22101a", text: "#c47a9a" },
+  };
+  return map[role] || { bg: "#1a1a1a", text: "#aaa" };
+}
+
+function shortRole(role) {
+  return { "Batsman":"Bat","Bowler":"Bowl","All-rounder":"AR","Wicketkeeper":"WK" }[role] || role;
+}
+</script>
+</body>
+</html>

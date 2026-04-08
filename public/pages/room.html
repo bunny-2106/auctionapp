@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cricket Auction Room</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="room-body">
+
+<!-- ═══════════════════════════════════════════════════════════ LOBBY PHASE -->
+<div id="phase-lobby" class="phase active">
+  <div class="room-header">
+    <div class="logo">🏏 CricBid</div>
+    <div class="room-id-badge">Room: <span id="lobby-room-id"></span></div>
+  </div>
+
+  <div class="container container-sm" style="padding-top:2rem;">
+    <div class="phase-eyebrow">Waiting for players</div>
+    <h1 class="phase-title" id="lobby-title">Auction Lobby</h1>
+
+    <!-- Join form for non-hosts -->
+    <div id="join-form" class="form-card" style="display:none;">
+      <h3 style="margin-bottom:1rem;">Join the auction</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" id="join-name" placeholder="Your name" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label>Franchise name</label>
+          <input type="text" id="join-team" placeholder="e.g. Royal Challengers" maxlength="40" />
+        </div>
+      </div>
+      <button class="btn-primary btn-full" onclick="joinRoom()">Join auction →</button>
+    </div>
+
+    <!-- Teams list -->
+    <div class="form-card">
+      <div class="card-header">
+        <h3>Teams in room</h3>
+        <span class="teams-count" id="teams-count">0 / 0</span>
+      </div>
+      <div id="teams-list" class="teams-list">
+        <p class="empty-msg">No teams yet...</p>
+      </div>
+      <div class="invite-box" style="margin-top:1rem;">
+        <span id="lobby-invite-url" style="font-size:13px;"></span>
+        <button class="copy-btn" onclick="copyLobbyLink()">Copy link</button>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">Budget per team</span><span class="info-val" id="lobby-budget"></span></div>
+      <div class="info-row"><span class="info-label">Bid time per player</span><span class="info-val" id="lobby-bid-time"></span></div>
+      <div class="info-row"><span class="info-label">AI analysis mode</span><span class="info-val" id="lobby-mode"></span></div>
+      <div class="info-row"><span class="info-label">Players in pool</span><span class="info-val" id="lobby-player-count">—</span></div>
+    </div>
+
+    <!-- Host controls -->
+    <div id="host-controls" style="display:none;">
+      <button class="btn-primary btn-full" id="start-btn" onclick="startAuction()" disabled>
+        Start auction →
+      </button>
+      <p style="text-align:center;font-size:13px;color:#888;margin-top:0.5rem;">Need at least 2 teams</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ AUCTION PHASE -->
+<div id="phase-auction" class="phase">
+  <div class="auction-layout">
+
+    <!-- ── Left: Current player ─────────────────────────────── -->
+    <div class="auction-main">
+      <div class="auction-header">
+        <span class="logo">🏏 CricBid</span>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="auction-progress"></div></div>
+          <span class="progress-label" id="auction-counter">Player 1 / 40</span>
+        </div>
+        <div class="room-id-badge">Room: <span id="auction-room-id"></span></div>
+      </div>
+
+      <!-- Player card -->
+      <div class="player-spotlight">
+        <div class="player-avatar-lg" id="player-avatar"></div>
+        <div class="player-info">
+          <div class="player-name" id="player-name">Loading...</div>
+          <div class="player-meta">
+            <span class="role-tag" id="player-role-tag"></span>
+            <span class="country-tag" id="player-country"></span>
+          </div>
+          <div class="player-speciality" id="player-speciality"></div>
+        </div>
+      </div>
+
+      <!-- Bid display + countdown -->
+      <div class="bid-section">
+        <div class="bid-top-row">
+          <div>
+            <div class="bid-label">Current bid</div>
+            <div class="bid-amount" id="current-bid-amount">₹0 Cr</div>
+            <div class="bid-team" id="current-bid-team">No bids yet — base price</div>
+          </div>
+          <div class="timer-wrap">
+            <svg class="timer-ring" viewBox="0 0 60 60">
+              <circle class="timer-ring-bg" cx="30" cy="30" r="26"/>
+              <circle class="timer-ring-fill" id="timer-ring-fill" cx="30" cy="30" r="26"/>
+            </svg>
+            <div class="timer-number" id="timer-number">–</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BID BUTTON — big, prominent, for the current user -->
+      <div class="bid-action-wrap" id="bid-action-wrap">
+        <button class="big-bid-btn" id="big-bid-btn" onclick="placeBid()">
+          <span class="big-bid-label">BID</span>
+          <span class="big-bid-amount" id="big-bid-next-amount">₹0 Cr</span>
+        </button>
+        <div class="my-balance-wrap">
+          <span class="my-balance-label">Your balance</span>
+          <span class="my-balance-val" id="my-balance-display">₹0 Cr</span>
+        </div>
+      </div>
+
+      <!-- Notification banners -->
+      <div id="sold-banner" class="banner banner-sold" style="display:none;"></div>
+      <div id="unsold-banner" class="banner banner-unsold" style="display:none;"></div>
+
+      <!-- Host-only emergency controls (minimal) -->
+      <div id="auction-host-controls" class="host-emergency" style="display:none;">
+        <button class="btn-danger-sm" onclick="hostEndPlayer('unsold')">Skip / Unsold</button>
+        <button class="btn-success-sm" id="host-sold-btn" onclick="hostEndPlayer('sold')" disabled>Force Sold</button>
+        <span class="host-ctrl-hint">Host override controls</span>
+      </div>
+    </div>
+
+    <!-- ── Right: Info sidebar ──────────────────────────────── -->
+    <div class="auction-sidebar">
+
+      <!-- My team section -->
+      <div class="sidebar-section my-squad-section">
+        <div class="sidebar-section-header">
+          <span class="sidebar-icon">🏆</span>
+          <span class="sidebar-title" id="my-team-label">My Squad</span>
+          <span class="sidebar-budget-badge" id="sidebar-my-balance">₹0 Cr left</span>
+        </div>
+        <div id="my-squad-list" class="my-squad-list">
+          <p class="empty-msg-sm">No players yet...</p>
+        </div>
+      </div>
+
+      <!-- Next player preview -->
+      <div class="sidebar-section next-player-section">
+        <div class="sidebar-section-header">
+          <span class="sidebar-icon">⏭</span>
+          <span class="sidebar-title">Up Next</span>
+        </div>
+        <div id="next-player-preview" class="next-player-card">
+          <span class="empty-msg-sm">Last player in queue</span>
+        </div>
+      </div>
+
+      <!-- All teams -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">
+          <span class="sidebar-icon">🏟</span>
+          <span class="sidebar-title">All Teams</span>
+        </div>
+        <div id="teams-bid-panel"></div>
+      </div>
+
+      <!-- Recent buys -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-header">
+          <span class="sidebar-icon">🔨</span>
+          <span class="sidebar-title">Recent Sales</span>
+        </div>
+        <div id="sold-log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ RESULTS PHASE -->
+<div id="phase-results" class="phase">
+  <div class="results-header">
+    <div class="logo">🏏 CricBid</div>
+    <h1 class="results-title">Auction complete</h1>
+    <p class="results-sub" id="results-mode-label"></p>
+  </div>
+
+  <div class="container">
+    <div id="ai-loading" class="ai-loading-card">
+      <div class="ai-spinner"></div>
+      <div class="ai-loading-title">Claude AI is analyzing all squads...</div>
+      <div class="ai-loading-sub" id="ai-mode-label"></div>
+    </div>
+
+    <div id="rankings-wrap" style="display:none;">
+      <div class="rankings-grid" id="rankings-list"></div>
+      <div class="squads-section">
+        <h2 style="margin-bottom:1.5rem;">All squads</h2>
+        <div class="squads-grid" id="squads-detail"></div>
+      </div>
+      <div class="sold-section">
+        <h2 style="margin-bottom:1rem;">Complete auction log</h2>
+        <table class="log-table" id="full-log"></table>
+      </div>
+      <div style="text-align:center;margin:2rem 0;">
+        <a href="/" class="btn-primary">Start new auction →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/room.js"></script>
+</body>
+</html>

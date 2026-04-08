@@ -1,0 +1,458 @@
+/* ── RESET & BASE ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:   #1D9E75;
+  --green-l: #E1F5EE;
+  --green-d: #085041;
+  --blue:    #378ADD;
+  --blue-l:  #E6F1FB;
+  --blue-d:  #0C447C;
+  --amber:   #EF9F27;
+  --amber-l: #FAEEDA;
+  --amber-d: #633806;
+  --red:     #E24B4A;
+  --red-l:   #FCEBEB;
+  --red-d:   #791F1F;
+  --pink-l:  #FBEAF0;
+  --pink-d:  #72243E;
+  --gray:    #F1EFE8;
+  --gray-mid:#888780;
+  --text:    #1a1a1a;
+  --text-2:  #555;
+  --text-3:  #888;
+  --border:  rgba(0,0,0,0.1);
+  --card-bg: #fff;
+  --radius:  12px;
+  --radius-sm: 8px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: var(--text);
+  background: #f9f8f5;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.2; }
+p { color: var(--text-2); }
+
+/* ── LAYOUT ───────────────────────────────────────────────────── */
+.container    { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+.container-sm { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+.section      { padding: 5rem 0; }
+.section-dark { background: #111; color: #fff; }
+.section-dark p, .section-dark label { color: #aaa; }
+.section-dark h2 { color: #fff; }
+
+/* ── BUTTONS ───────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-block;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.75rem;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+.btn-primary:hover { background: var(--green-d); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+
+.btn-ghost {
+  display: inline-block;
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.75rem;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.7); }
+.btn-full { width: 100%; text-align: center; }
+
+.btn-danger { background: var(--red); color: #fff; border: none; border-radius: var(--radius-sm); padding: 0.65rem 1.25rem; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+.btn-danger:hover { background: var(--red-d); }
+.btn-success { background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); padding: 0.65rem 1.25rem; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+.btn-success:hover { background: var(--green-d); }
+.btn-success:disabled { background: #ccc; cursor: not-allowed; }
+
+/* ── FORMS ────────────────────────────────────────────────────── */
+.form-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1.25rem; }
+.section-dark .form-card { background: #1a1a1a; border-color: #333; }
+.form-group { margin-bottom: 1.25rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.03em; }
+.section-dark label { color: #ccc; }
+
+.label-hint { font-size: 13px; color: var(--text-3); font-weight: 400; margin-bottom: 0.75rem; text-transform: none; letter-spacing: 0; display: block; margin-top: 4px; }
+
+input[type="text"], select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+  color: var(--text);
+  transition: border-color 0.15s;
+  -webkit-appearance: none;
+}
+.section-dark input, .section-dark select { background: #111; border-color: #444; color: #fff; }
+input:focus, select:focus { outline: none; border-color: var(--green); }
+
+/* ── ANALYSIS MODE CARDS ──────────────────────────────────────── */
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.mode-card { cursor: pointer; position: relative; }
+.mode-card input[type="radio"] { position: absolute; opacity: 0; }
+.mode-card-inner { border: 2px solid #333; border-radius: var(--radius); padding: 1.25rem; transition: border-color 0.15s, background 0.15s; height: 100%; }
+.mode-card.selected .mode-card-inner { border-color: var(--green); background: rgba(29,158,117,0.08); }
+.mode-icon { font-size: 28px; margin-bottom: 0.5rem; }
+.mode-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 0.35rem; }
+.mode-desc { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 0.75rem; }
+.mode-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; background: #333; color: #aaa; text-transform: uppercase; letter-spacing: 0.04em; }
+.mode-badge-fire { background: rgba(239,159,39,0.2); color: var(--amber); }
+
+/* ── BID TIMER OPTIONS ────────────────────────────────────────── */
+.timer-options { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.timer-opt {
+  background: #222;
+  color: #aaa;
+  border: 2px solid #333;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 1rem;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.timer-opt:hover { border-color: #555; color: #fff; }
+.timer-opt.selected { border-color: var(--green); color: var(--green); background: rgba(29,158,117,0.1); }
+
+/* ── INVITE & MISC ────────────────────────────────────────────── */
+.invite-box { display: flex; align-items: center; gap: 0.75rem; background: #111; border: 1px solid #333; border-radius: var(--radius-sm); padding: 0.6rem 0.9rem; margin-bottom: 1rem; word-break: break-all; font-size: 13px; color: #ccc; }
+.copy-btn { flex-shrink: 0; background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 0.35rem 0.85rem; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.05em; color: #fff; }
+
+/* ── HERO (homepage) ──────────────────────────────────────────── */
+.hero-section { padding: 3rem 0 2rem; }
+.hero-eyebrow { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); margin-bottom: 1rem; }
+.hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(52px, 8vw, 96px); color: #fff; letter-spacing: 0.02em; line-height: 1; margin-bottom: 1rem; }
+.hero-sub { font-size: 16px; color: #888; max-width: 560px; line-height: 1.6; }
+
+/* ── INFO CARD ────────────────────────────────────────────────── */
+.info-card { background: rgba(29,158,117,0.06); border: 1px solid rgba(29,158,117,0.2); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+.info-row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 13px; color: #666; }
+.info-val { font-size: 13px; font-weight: 600; color: #ddd; }
+
+/* ── PLAYER POOL (homepage) ───────────────────────────────────── */
+.player-pool-header { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.75rem; }
+.player-pool-header input { flex: 1; min-width: 160px; }
+
+.pool-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.pool-filter-btn { background: #222; color: #888; border: 1px solid #333; border-radius: 20px; padding: 0.3rem 0.85rem; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.pool-filter-btn:hover { border-color: #555; color: #ccc; }
+.pool-filter-btn.active { background: rgba(29,158,117,0.15); border-color: var(--green); color: var(--green); }
+
+.pool-selection-summary { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 13px; }
+#selected-count { color: var(--green); font-weight: 600; }
+.pool-quick-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.pool-action-btn { background: #1a1a1a; color: #888; border: 1px solid #333; border-radius: 6px; padding: 0.3rem 0.75rem; font-size: 12px; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.pool-action-btn:hover { border-color: #555; color: #ccc; }
+
+.player-pool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.25rem;
+  border: 1px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  background: #111;
+}
+
+.pool-player-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  background: #1a1a1a;
+  user-select: none;
+}
+.pool-player-card:hover { border-color: #444; background: #222; }
+.pool-player-card.selected { border-color: var(--green); background: rgba(29,158,117,0.08); }
+
+.pool-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pool-info { flex: 1; min-width: 0; }
+.pool-name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pool-meta { font-size: 11px; color: #666; }
+.pool-role { font-weight: 600; }
+.pool-base { font-size: 11px; color: var(--green); font-weight: 600; flex-shrink: 0; }
+.pool-check { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; color: var(--green); font-weight: 700; }
+.pool-player-card.selected .pool-check { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* ── ROOM PAGE ────────────────────────────────────────────────── */
+.room-body { background: #0d0d0d; color: #fff; min-height: 100vh; }
+.phase { display: none; }
+.phase.active { display: block; }
+
+.room-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid #222; background: #111; }
+.room-id-badge { font-size: 12px; background: #222; border-radius: 6px; padding: 4px 10px; color: #aaa; font-weight: 600; letter-spacing: 0.05em; }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.card-header h3 { margin: 0; color: #fff; }
+.teams-count { font-size: 13px; color: #888; }
+.form-card { background: #1a1a1a; border-color: #333; }
+.form-card h3 { color: #fff; }
+.section-dark .form-card { background: #1a1a1a; border-color: #333; }
+
+.lobby-team-row { display: flex; align-items: center; gap: 12px; padding: 0.7rem 0; border-bottom: 1px solid #2a2a2a; }
+.lobby-team-row:last-child { border-bottom: none; }
+.team-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(29,158,117,0.2); color: var(--green); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.team-row-name { font-size: 14px; font-weight: 600; color: #fff; }
+.team-row-budget { font-size: 12px; color: #666; }
+.team-row-status { margin-left: auto; }
+.empty-msg { color: #555; font-size: 14px; padding: 0.5rem 0; }
+.empty-msg-sm { color: #555; font-size: 12px; }
+.teams-list { min-height: 60px; }
+
+.phase-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); margin-bottom: 0.5rem; }
+.phase-title { font-family: 'Bebas Neue', sans-serif; font-size: 42px; letter-spacing: 0.04em; color: #fff; margin-bottom: 1.5rem; }
+
+.you-badge { background: rgba(55,138,221,0.2); color: var(--blue); font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 4px; }
+.host-badge { background: rgba(239,159,39,0.2); color: var(--amber); font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 4px; }
+
+/* ── AUCTION LAYOUT ───────────────────────────────────────────── */
+.auction-layout { display: grid; grid-template-columns: 1fr 340px; min-height: 100vh; }
+.auction-main { padding: 0; border-right: 1px solid #222; display: flex; flex-direction: column; }
+
+.auction-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #222; background: #111; flex-shrink: 0; }
+.progress-wrap { flex: 1; }
+.progress-bar { height: 4px; background: #2a2a2a; border-radius: 2px; margin-bottom: 4px; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--green); transition: width 0.5s ease; }
+.progress-label { font-size: 11px; color: #666; }
+
+/* Player spotlight */
+.player-spotlight { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem 1.5rem 1.25rem; border-bottom: 1px solid #1a1a1a; flex-shrink: 0; }
+.player-avatar-lg { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 24px; flex-shrink: 0; border: 2px solid #333; }
+.player-name { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 0.03em; color: #fff; line-height: 1; margin-bottom: 0.4rem; }
+.player-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+.player-speciality { font-size: 12px; color: #555; }
+
+.role-tag, .country-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; }
+.country-tag { background: #222; color: #aaa; }
+.role-tagbatsman       { background: #162233; color: #5a9fd4; }
+.role-tagbowler        { background: #0e2118; color: #4cb58a; }
+.role-tagallrounder    { background: #231a0c; color: #c9872a; }
+.role-tagwicketkeeper  { background: #22101a; color: #c47a9a; }
+
+/* Bid section with timer */
+.bid-section { padding: 1.25rem 1.5rem; border-bottom: 1px solid #1a1a1a; flex-shrink: 0; }
+.bid-top-row { display: flex; align-items: center; justify-content: space-between; }
+.bid-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 0.25rem; }
+.bid-amount { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 0.02em; color: var(--green); line-height: 1; transition: color 0.2s; }
+.bid-amount.bid-flash { color: var(--amber); }
+.bid-team { font-size: 13px; color: #666; margin-top: 0.2rem; }
+
+/* Timer ring */
+.timer-wrap { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+.timer-ring { width: 60px; height: 60px; transform: rotate(-90deg); }
+.timer-ring-bg { fill: none; stroke: #2a2a2a; stroke-width: 4; }
+.timer-ring-fill { fill: none; stroke: var(--green); stroke-width: 4; stroke-linecap: round; transition: stroke 0.5s; }
+.timer-number { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: #aaa; }
+.timer-number.timer-warn { color: var(--amber); }
+.timer-number.timer-danger { color: var(--red); animation: pulse 0.5s ease-in-out infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.15); } }
+
+/* ── BIG BID BUTTON ──────────────────────────────────────────── */
+.bid-action-wrap { padding: 1.25rem 1.5rem; border-bottom: 1px solid #1a1a1a; display: flex; align-items: center; gap: 1.25rem; flex-shrink: 0; }
+
+.big-bid-btn {
+  flex: 1;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 4px 20px rgba(29,158,117,0.3);
+}
+.big-bid-btn:hover:not(:disabled) { background: #18b880; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(29,158,117,0.45); }
+.big-bid-btn:active:not(:disabled) { transform: scale(0.97); }
+.big-bid-btn:disabled { background: #1f1f1f; box-shadow: none; cursor: not-allowed; opacity: 0.6; }
+.big-bid-btn.btn-leading { background: #0e2a1e; border: 2px solid var(--green); box-shadow: 0 0 0 2px rgba(29,158,117,0.2); color: var(--green); cursor: default; }
+.big-bid-label { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.1em; line-height: 1; }
+.big-bid-amount { font-size: 15px; font-weight: 700; opacity: 0.85; }
+
+.my-balance-wrap { text-align: center; }
+.my-balance-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 2px; }
+.my-balance-val { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--green); }
+
+/* Banners */
+.banner { padding: 0.75rem 1.5rem; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+.banner-sold   { background: rgba(29,158,117,0.15); color: var(--green); border-left: 3px solid var(--green); }
+.banner-unsold { background: rgba(226,75,74,0.1); color: #e07070; border-left: 3px solid var(--red); }
+
+/* Host emergency controls */
+.host-emergency { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem; border-bottom: 1px solid #1a1a1a; flex-shrink: 0; }
+.btn-danger-sm { background: rgba(226,75,74,0.15); color: #e07070; border: 1px solid rgba(226,75,74,0.3); border-radius: var(--radius-sm); padding: 0.4rem 0.9rem; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.btn-danger-sm:hover { background: var(--red); color: #fff; }
+.btn-success-sm { background: rgba(29,158,117,0.15); color: var(--green); border: 1px solid rgba(29,158,117,0.3); border-radius: var(--radius-sm); padding: 0.4rem 0.9rem; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.12s; }
+.btn-success-sm:hover:not(:disabled) { background: var(--green); color: #fff; }
+.btn-success-sm:disabled { opacity: 0.4; cursor: not-allowed; }
+.host-ctrl-hint { font-size: 11px; color: #444; margin-left: auto; }
+
+/* ── AUCTION SIDEBAR ──────────────────────────────────────────── */
+.auction-sidebar { background: #0a0a0a; display: flex; flex-direction: column; overflow-y: auto; }
+
+.sidebar-section { border-bottom: 1px solid #1a1a1a; padding: 1rem; }
+.sidebar-section:last-child { border-bottom: none; }
+.sidebar-section-header { display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem; }
+.sidebar-icon { font-size: 14px; }
+.sidebar-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #666; flex: 1; }
+.sidebar-budget-badge { font-size: 12px; font-weight: 700; color: var(--green); background: rgba(29,158,117,0.1); border-radius: 4px; padding: 1px 6px; }
+
+/* My squad list */
+.my-squad-list { display: flex; flex-direction: column; gap: 2px; }
+.my-squad-row { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
+.my-squad-row:last-child { border-bottom: none; }
+.my-squad-player { font-size: 12px; color: #ccc; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.my-squad-price { font-size: 11px; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+/* Next player */
+.next-player-card { background: #111; border-radius: var(--radius-sm); padding: 0.65rem; }
+.next-player-inner { display: flex; align-items: center; gap: 0.6rem; }
+.next-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.next-name { font-size: 13px; font-weight: 600; color: #ddd; }
+.next-meta { font-size: 11px; color: #555; }
+
+/* Team bid cards in sidebar */
+.bid-team-card { background: #131313; border: 1px solid #222; border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 0.5rem; }
+.bid-team-card.leading { border-color: var(--green); background: rgba(29,158,117,0.05); }
+.bid-team-card.my-team { border-color: var(--blue); }
+.bid-team-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.bid-team-name { font-size: 13px; font-weight: 600; color: #fff; }
+.leading-badge { font-size: 11px; color: var(--green); font-weight: 700; }
+.bid-team-budget { font-size: 11px; color: #555; margin-bottom: 5px; }
+.budget-bar-wrap { height: 3px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+.budget-bar-fill { height: 100%; border-radius: 2px; background: var(--green); transition: width 0.4s; }
+
+/* Sold log */
+.log-row { display: flex; gap: 5px; align-items: center; padding: 3px 0; font-size: 11px; border-bottom: 1px solid #1a1a1a; }
+.log-row:last-child { border-bottom: none; }
+.log-row.log-mine { background: rgba(55,138,221,0.04); border-radius: 3px; padding: 3px 4px; }
+.log-player { color: #bbb; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-arrow { color: #333; }
+.log-team { color: #666; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log-price { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+/* ── RESULTS PHASE ────────────────────────────────────────────── */
+.results-header { background: #111; padding: 2.5rem 1.5rem 2rem; text-align: center; border-bottom: 1px solid #222; }
+.results-title { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 0.04em; color: #fff; }
+.results-sub { color: #666; font-size: 14px; margin-top: 0.5rem; }
+#phase-results .container { padding: 2rem 1.5rem; }
+
+.ai-loading-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: var(--radius); padding: 3rem; text-align: center; margin: 2rem 0; }
+.ai-spinner { width: 40px; height: 40px; border: 3px solid #333; border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-loading-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 0.4rem; }
+.ai-loading-sub { font-size: 13px; color: #666; }
+
+.rankings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 3rem; }
+.ranking-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: var(--radius); padding: 1.5rem; position: relative; }
+.rank-pos-1 { border-color: #b8860b; background: linear-gradient(135deg, #1a1a1a 70%, rgba(184,134,11,0.08)); }
+.rank-pos-2 { border-color: #666; }
+.rank-pos-3 { border-color: #7a4a2a; }
+.rank-medal { font-size: 32px; margin-bottom: 0.5rem; }
+.rank-score-badge { position: absolute; top: 1.25rem; right: 1.25rem; font-size: 22px; font-weight: 700; color: var(--green); font-family: 'Bebas Neue', sans-serif; }
+.rank-score-badge span { font-size: 12px; color: #555; }
+.rank-team { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.04em; color: #fff; margin-bottom: 2px; }
+.rank-mode-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #555; margin-bottom: 0.75rem; font-weight: 600; }
+.rank-verdict { font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 1rem; border-left: 2px solid #333; padding-left: 0.75rem; }
+.rank-detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+.rank-detail-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #555; margin-bottom: 3px; font-weight: 600; }
+.rank-detail-val { font-size: 12px; color: #aaa; line-height: 1.5; }
+.rank-strengths { color: #7dcfb6; }
+.rank-weaknesses { color: #e07070; }
+.rank-mvp { font-size: 12px; color: #888; margin-bottom: 0.75rem; }
+.rank-mvp-label { font-weight: 700; color: var(--amber); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.rank-players { display: flex; flex-wrap: wrap; gap: 4px; }
+.player-chip { font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 500; }
+.player-chipbatsman      { background: #162233; color: #5a9fd4; }
+.player-chipbowler       { background: #0e2118; color: #4cb58a; }
+.player-chipallrounder   { background: #231a0c; color: #c9872a; }
+.player-chipwicketkeeper { background: #22101a; color: #c47a9a; }
+
+.squads-section { margin-bottom: 3rem; }
+.squads-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+.squad-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: var(--radius); padding: 1.25rem; }
+.squad-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.squad-name { font-size: 16px; font-weight: 700; color: #fff; }
+.squad-spent { font-size: 13px; color: var(--green); font-weight: 600; }
+.squad-composition { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0.75rem; }
+.comp-tag { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.squad-player-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #222; }
+.squad-player-row:last-child { border-bottom: none; }
+.squad-player-initials { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.squad-player-name { font-size: 13px; color: #ddd; flex: 1; }
+.squad-player-role { font-size: 11px; color: #555; }
+.squad-player-price { font-size: 12px; color: var(--green); font-weight: 600; flex-shrink: 0; }
+
+.sold-section { margin-bottom: 3rem; }
+.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.log-table th { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid #333; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.log-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #1a1a1a; color: #bbb; }
+.log-table tr:last-child td { border-bottom: none; }
+.log-table td:last-child { color: var(--green); font-weight: 600; }
+
+/* ── TOAST ────────────────────────────────────────────────────── */
+.toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 0.65rem 1.25rem; border-radius: 8px; font-size: 14px; z-index: 1000; transition: opacity 0.4s; white-space: nowrap; }
+.toast-success { background: rgba(29,158,117,0.9); }
+.toast-error   { background: rgba(226,75,74,0.9); }
+.toast.fade-out { opacity: 0; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .auction-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .auction-sidebar { border-top: 1px solid #222; max-height: 60vh; }
+}
+@media (max-width: 768px) {
+  .mode-cards { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .player-name { font-size: 26px; }
+  .bid-amount { font-size: 40px; }
+  .rankings-grid { grid-template-columns: 1fr; }
+  .squads-grid { grid-template-columns: 1fr; }
+  .player-pool-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .pool-selection-summary { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .big-bid-label { font-size: 22px; }
+  .bid-action-wrap { flex-direction: column; }
+}
