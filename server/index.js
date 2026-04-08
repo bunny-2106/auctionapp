@@ -4,7 +4,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
-const fetch = require("node-fetch");
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const app = express();
 const server = http.createServer(app);
@@ -126,7 +126,7 @@ Respond ONLY with a valid JSON array. No markdown or extra text:
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-opus-4-20250514",
+        model: "claude-sonnet-4-5-20251001",
         max_tokens: 2000,
         temperature:0.75,
         messages: [{ role: "user", content: prompt }],
